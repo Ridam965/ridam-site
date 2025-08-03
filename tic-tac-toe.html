@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ridam Tic Tac Toe</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: rgb(255, 0, 0); 
+    }
+
+    h1 {
+      margin-top: 40px;
+    }
+
+    #game {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 10px;
+      justify-content: center;
+      margin: 30px auto;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      background-color: white;
+      font-size: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid #444;
+    }
+
+    .cell:hover {
+      background-color: #ddd;
+    }
+
+    #status {
+      font-size: 24px;
+      margin: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ridam Tic Tac Toe</h1>
+  <div id="status">Player X's turn in Ridam Tic Tac Toe</div>
+  <div id="game"></div>
+  <button onclick="restartGame()">Restart Game</button>
+
+  <script>
+    const gameBoard = document.getElementById("game");
+    const statusText = document.getElementById("status");
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "X";
+    let isGameActive = true;
+
+    const winningCombinations = [
+      [0,1,2],
+      [3,4,5],
+      [6,7,8],
+      [0,3,6],
+      [1,4,7],
+      [2,5,8],
+      [0,4,8],
+      [2,4,6]
+    ];
+
+    function createBoard() {
+      gameBoard.innerHTML = "";
+      board.forEach((cell, index) => {
+        const cellDiv = document.createElement("div");
+        cellDiv.classList.add("cell");
+        cellDiv.dataset.index = index;
+        cellDiv.innerText = cell;
+        cellDiv.addEventListener("click", handleMove);
+        gameBoard.appendChild(cellDiv);
+      });
+    }
+
+    function handleMove(event) {
+      const index = event.target.dataset.index;
+      if (board[index] !== "" || !isGameActive) return;
+
+      board[index] = currentPlayer;
+      event.target.innerText = currentPlayer;
+
+      if (checkWinner()) {
+        statusText.innerText = `Player ${currentPlayer} wins in Ridam Tic Tac Toe!`;
+        isGameActive = false;
+      } else if (board.every(cell => cell !== "")) {
+        statusText.innerText = "It's a draw in Ridam Tic Tac Toe!";
+        isGameActive = false;
+      } else {
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        statusText.innerText = `Player ${currentPlayer}'s turn in Ridam Tic Tac Toe`;
+      }
+    }
+
+    function checkWinner() {
+      return winningCombinations.some(combination => {
+        const [a, b, c] = combination;
+        return (
+          board[a] === currentPlayer &&
+          board[b] === currentPlayer &&
+          board[c] === currentPlayer
+        );
+      });
+    }
+
+    function restartGame() {
+      board = ["", "", "", "", "", "", "", "", ""];
+      currentPlayer = "X";
+      isGameActive = true;
+      statusText.innerText = "Player X's turn in Ridam Tic Tac Toe";
+      createBoard();
+    }
+
+    // Initialize
+    createBoard();
+  </script>
+</body>
+</html>
